@@ -115,7 +115,7 @@ class MainWindow(QMainWindow):
         self.allProbes = ConnectHelper.get_all_connected_probes(False, None, False)
         self.ui.usb_comboBox.clear()
         if self.allProbes is None or len(self.allProbes) == 0:
-            print("No Probe")
+            print("No Probe",self.allProbes)
         else:
             # print(self.allProbes)
             for Probe in self.allProbes:
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     win = MainWindow()
     win.setWindowTitle("MCUProg")
     win.show()
-    app.exit(app.exec_())
+    app.exit(app.exec())
 
 
 
