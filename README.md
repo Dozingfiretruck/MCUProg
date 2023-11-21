@@ -1,7 +1,7 @@
 # MCUProg
 
 #### 介绍
-MCUProg 基于pyoc的上位机下载软件
+MCUProg是一款基于pyocd+pyside6的上位机下载软件（此软件只是用来学习pyocd和pyside6的练手项目，如果能帮到你那）
 
 #### 软件架构
 软件架构说明
