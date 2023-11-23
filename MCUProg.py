@@ -13,6 +13,7 @@ class MainWindow(QMainWindow):
     allProbes = None
     Probe = None
     session = None
+    frequency = {'10MHZ':10000000,'5MHZ':5000000,'2MHZ':2000000,'1MHZ':1000000,'500kHZ':500000,'200kHZ':200000,'100kHZ':100000,'50kHZ':50000,'20kHZ':20000,'10kHZ':10000,'5kHZ':5000}
     def __init__(self, parent = None) :
         super().__init__(parent)
         self.ui = Ui_MainWindow()
@@ -49,35 +50,12 @@ class MainWindow(QMainWindow):
                     if self.ui.usb_comboBox.currentText() == Probe.description:
                         self.Probe = Probe
                         break
-                    # print(self.ui.usb_comboBox.currentText())
-                    # print(Probe,Probe.unique_id)
-                    # print(self.ui.targets_comboBox.currentText())
+                # print(self.ui.usb_comboBox.currentText())
+                # print(Probe,Probe.unique_id)
+                # print(self.ui.targets_comboBox.currentText())
+                # print(self.frequency[self.ui.speed_comboBox.currentText()])
                 if self.Probe:
-                    frequency = 5000
-                    match self.ui.targets_comboBox.currentText():
-                        case '10MHZ':
-                            frequency = 10000000
-                        case '5MHZ':
-                            frequency = 5000000
-                        case '2MHZ':
-                            frequency = 2000000
-                        case '1MHZ':
-                            frequency = 1000000
-                        case '500kHZ':
-                            frequency = 500000
-                        case '200kHZ':
-                            frequency = 200000
-                        case '100kHZ':
-                            frequency = 100000
-                        case '50kHZ':
-                            frequency = 50000
-                        case '20kHZ':
-                            frequency = 20000
-                        case '10kHZ':
-                            frequency = 10000
-                        case '5kHZ':
-                            frequency = 5000
-                    self.session = ConnectHelper.session_with_chosen_probe(False, False, self.Probe.unique_id,options = {"frequency": frequency, "target_override": self.ui.targets_comboBox.currentText()})
+                    self.session = ConnectHelper.session_with_chosen_probe(False, False, self.Probe.unique_id,options = {"frequency": self.frequency[self.ui.speed_comboBox.currentText()], "target_override": self.ui.targets_comboBox.currentText()})
                 if self.session:
                     self.session.open()
                     board = self.session.board
