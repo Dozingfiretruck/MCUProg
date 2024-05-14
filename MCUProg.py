@@ -20,7 +20,7 @@ from pyocd.flash.file_programmer import FileProgrammer
 from pyocd.tools.lists import ListGenerator
 from pyocd._version import version as pyocd_version
 
-version = "0.0.2"
+version = "0.0.3"
 
 if getattr(sys, 'frozen', False):
     run_dir = sys._MEIPASS
