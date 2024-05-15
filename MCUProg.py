@@ -1,3 +1,27 @@
+# Compilation mode, support OS-specific options
+# nuitka-project-if: {OS} in ("Windows", "Linux", "Darwin", "FreeBSD"):
+#    nuitka-project: --onefile
+# nuitka-project-else:
+#    nuitka-project: --standalone
+
+# The PySide6 plugin covers qt-plugins
+# nuitka-project: --enable-plugin=pyside6
+
+# The following options are used to compile the program with Clang
+# nuitka-project: --clang
+
+# The output directory and other options
+# nuitka-project: --output-dir=build
+# nuitka-project: --disable-console
+# nuitka-project: --include-data-dir=./icons=./icons
+# nuitka-project: --include-data-dir=./resources=./resources
+# nuitka-project-if: {OS} in ("Windows"):
+#    nuitka-project: --windows-icon-from-ico=./icons/tool_icon.ico
+# nuitka-project-if: {OS} in ("Linux", "Darwin", "FreeBSD"):
+#    nuitka-project: --linux-icon=./icons/tool_icon.ico
+
+
+
 import sys,os
 
 from PySide6 import __version__ as PySide6_version
