@@ -46,7 +46,7 @@ from pyocd._version import version as pyocd_version
 
 from pyocd.target.pack.cmsis_pack import CmsisPack
 
-version = "0.0.3"
+version = "0.0.4"
 
 if getattr(sys, 'frozen', False):
     run_dir = sys._MEIPASS
