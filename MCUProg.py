@@ -44,6 +44,8 @@ from pyocd.flash.file_programmer import FileProgrammer
 from pyocd.tools.lists import ListGenerator
 from pyocd._version import version as pyocd_version
 
+from pyocd.target.pack.cmsis_pack import CmsisPack
+
 version = "0.0.3"
 
 if getattr(sys, 'frozen', False):
@@ -119,8 +121,9 @@ def programmer(MainWindow):
     
 class MainWindow(QMainWindow):
     app_w = 480
-    app_h = 280
+    app_h = 320
     file_path = ''
+    pack_path = ''
     allProbes = None
     Probe = None
     session = None
@@ -167,74 +170,89 @@ class MainWindow(QMainWindow):
         self.action_file_exit = self.menu_file.addAction(QCoreApplication.translate("MCUProg", "关于", None))
         self.action_file_exit.triggered.connect(self.click_about)
 
+        # pack标签
+        self.pack_label = QLabel(self.centralwidget)
+        self.pack_label.setObjectName(u"pack_label")
+        self.pack_label.setGeometry(QRect(20, 20, 53, 20))
+        # pack
+        self.pack_lineEdit = QLineEdit(self.centralwidget)
+        self.pack_lineEdit.setObjectName(u"pack_lineEdit")
+        self.pack_lineEdit.setGeometry(QRect(80, 20, 260, 20))
+        # pack选择
+        self.pack_selection_button = QPushButton(self.centralwidget)
+        self.pack_selection_button.setObjectName(u"pack_selection_button")
+        self.pack_selection_button.setGeometry(QRect(360, 20, 80, 20))
+
         # 目标芯片标签
         self.target_label = QLabel(self.centralwidget)
         self.target_label.setObjectName(u"target_label")
-        self.target_label.setGeometry(QRect(20, 20, 50, 20))
+        self.target_label.setGeometry(QRect(20, 20+40, 50, 20))
         # 目标芯片选择
         self.targets_comboBox = QComboBox2(self.centralwidget)
         self.targets_comboBox.setObjectName(u"targets_comboBox")
-        self.targets_comboBox.setGeometry(QRect(80, 20, 160, 20))
+        self.targets_comboBox.setGeometry(QRect(80, 20+40, 160, 20))
         # 烧录速度标签
         self.speed_label = QLabel(self.centralwidget)
         self.speed_label.setObjectName(u"speed_label")
-        self.speed_label.setGeometry(QRect(260, 20, 50, 20))
+        self.speed_label.setGeometry(QRect(260, 20+40, 50, 20))
         # 烧录速度选择
         self.speed_comboBox = QComboBox(self.centralwidget)
         self.speed_comboBox.setObjectName(u"speed_comboBox")
-        self.speed_comboBox.setGeometry(QRect(320, 20, 120, 20))
+        self.speed_comboBox.setGeometry(QRect(320, 20+40, 120, 20))
         self.speed_comboBox.addItems(['10MHZ','5MHZ','2MHZ','1MHZ','500kHZ','200kHZ','100kHZ','50kHZ','20kHZ','10kHZ','5kHZ'])
+
         # 烧录器标签
         self.downloard_label = QLabel(self.centralwidget)
         self.downloard_label.setObjectName(u"downloard_label")
-        self.downloard_label.setGeometry(QRect(20, 60, 53, 20))
+        self.downloard_label.setGeometry(QRect(20, 20+40+40, 53, 20))
         # 烧录器选择
         self.usb_comboBox = QComboBox2(self.centralwidget)
         self.usb_comboBox.setObjectName(u"usb_comboBox")
-        self.usb_comboBox.setGeometry(QRect(80, 60, 260, 23))
+        self.usb_comboBox.setGeometry(QRect(80, 20+40+40, 260, 23))
         # 连接按钮
         self.usb_connect_button = QPushButton(self.centralwidget)
         self.usb_connect_button.setObjectName(u"usb_connect_button")
-        self.usb_connect_button.setGeometry(QRect(360, 60, 80, 20))
+        self.usb_connect_button.setGeometry(QRect(360, 20+40+40, 80, 20))
         # 烧录固件标签
         self.file_label = QLabel(self.centralwidget)
         self.file_label.setObjectName(u"file_label")
-        self.file_label.setGeometry(QRect(20, 100, 53, 20))
+        self.file_label.setGeometry(QRect(20, 20+40+40+40, 53, 20))
         # 烧录固件
         self.file_lineEdit = QLineEdit(self.centralwidget)
         self.file_lineEdit.setObjectName(u"file_lineEdit")
-        self.file_lineEdit.setGeometry(QRect(80, 100, 260, 20))
+        self.file_lineEdit.setGeometry(QRect(80, 20+40+40+40, 260, 20))
         # 烧录固件选择
         self.file_selection_button = QPushButton(self.centralwidget)
         self.file_selection_button.setObjectName(u"file_selection_button")
-        self.file_selection_button.setGeometry(QRect(360, 100, 80, 20))
+        self.file_selection_button.setGeometry(QRect(360, 20+40+40+40, 80, 20))
         # 烧录地址标签
         self.base_address_label = QLabel(self.centralwidget)
         self.base_address_label.setObjectName(u"base_address_label")
-        self.base_address_label.setGeometry(QRect(20, 140, 140, 20))
+        self.base_address_label.setGeometry(QRect(20, 20+40+40+40+40, 140, 20))
         # 烧录地址
         self.base_address_lineEdit = QLineEdit(self.centralwidget)
         self.base_address_lineEdit.setObjectName(u"base_address_lineEdit")
-        self.base_address_lineEdit.setGeometry(QRect(160, 140, 180, 20))
+        self.base_address_lineEdit.setGeometry(QRect(160, 20+40+40+40+40, 180, 20))
         # 是否擦除芯片
         self.chip_erase_checkBox = QCheckBox(self.centralwidget)
         self.chip_erase_checkBox.setObjectName(u"chip_erase_checkBox")
-        self.chip_erase_checkBox.setGeometry(QRect(340, 140, 100, 20))
+        self.chip_erase_checkBox.setGeometry(QRect(340, 20+40+40+40+40, 100, 20))
         # 进度条
         self.flash_progressBar = QProgressBar(self.centralwidget)
         self.flash_progressBar.setObjectName(u"flash_progressBar")
-        self.flash_progressBar.setGeometry(QRect(20, 180, 320, 20))
+        self.flash_progressBar.setGeometry(QRect(20, 20+40+40+40+40+40, 320, 20))
         self.flash_progressBar.setValue(0)
         # 烧录按钮
         self.flash_button = QPushButton(self.centralwidget)
         self.flash_button.setObjectName(u"flash_button")
-        self.flash_button.setGeometry(QRect(360, 180, 80, 20))
+        self.flash_button.setGeometry(QRect(360, 20+40+40+40+40+40, 80, 20))
         # 信息标签
         self.logs_label = QLabel(self.centralwidget)
         self.logs_label.setObjectName(u"logs_label")
-        self.logs_label.setGeometry(QRect(20, 220, 420, 20))
+        self.logs_label.setGeometry(QRect(20, 20+40+40+40+40+40+40, 420, 20))
 
         # 信号与槽
+        self.pack_selection_button.clicked.connect(self.click_choose_pack)
         self.usb_comboBox.pop_up.connect(self.usb_selection)
         self.usb_connect_button.clicked.connect(self.usb_connect_button_click)
         self.targets_comboBox.pop_up.connect(self.target_selection)
@@ -251,6 +269,9 @@ class MainWindow(QMainWindow):
         self.target_selection()
 
     def retranslateUi(self):
+        self.pack_label.setText(QCoreApplication.translate("MCUProg", u"pack文件", None))
+        self.pack_selection_button.setText(QCoreApplication.translate("MCUProg", u"选择pack文件", None))
+
         self.file_selection_button.setText(QCoreApplication.translate("MCUProg", u"选择固件", None))
         self.flash_button.setText(QCoreApplication.translate("MCUProg", u"烧录", None))
         self.usb_connect_button.setText(QCoreApplication.translate("MCUProg", u"连接", None))
@@ -273,11 +294,14 @@ class MainWindow(QMainWindow):
         for target in targets:
             # print(target['name'])
             self.targets_comboBox.addItem(target['name'])
+        if self.pack_path != '':
+            self.pack = CmsisPack(self.pack_path)
+            for device in self.pack.devices:
+                self.targets_comboBox.addItem(device.part_number.lower())
 
-    # def click_install_pack(self):
-    #     pack_file_path, _ = QFileDialog.getOpenFileName(self, "选择pack文件",self.file_path or os.getcwd(),'(*.pack)')
-    #     print(pack_file_path)
-    #     # self.file_lineEdit.setText(self.file_path)
+    def click_choose_pack(self):
+        self.pack_path, _ = QFileDialog.getOpenFileName(self, "选择pack文件",self.pack_path or os.getcwd(),'(*.pack)')
+        self.pack_lineEdit.setText(self.pack_path)
 
     def file_selection_button_click(self):
         self.file_path, _ = QFileDialog.getOpenFileName(self, "选择烧录文件",self.file_path or os.getcwd(),'(*.bin *.hex *.elf *.axf)')
@@ -304,10 +328,12 @@ class MainWindow(QMainWindow):
                     self.session = ConnectHelper.session_with_chosen_probe(
                                     blocking=False, 
                                     return_first=False, 
+                                    pack=self.pack_path,
                                     unique_id=self.Probe.unique_id,
-                                    options = {"frequency": self.frequency[self.speed_comboBox.currentText()], 
-                                                "target_override": self.targets_comboBox.currentText()})
+                                    frequency = self.frequency[self.speed_comboBox.currentText()],
+                                    target_override = self.targets_comboBox.currentText())
                 if self.session:
+                    print("project_dir: %s" % self.session.project_dir)
                     self.session.open()
                     board = self.session.board
                     print("Board MSG:")
