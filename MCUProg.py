@@ -328,7 +328,7 @@ class MainWindow(QMainWindow):
                     self.session = ConnectHelper.session_with_chosen_probe(
                                     blocking=False, 
                                     return_first=False, 
-                                    pack=self.pack_path,
+                                    pack=None if self.pack_path == '' else self.pack_path,
                                     unique_id=self.Probe.unique_id,
                                     frequency = self.frequency[self.speed_comboBox.currentText()],
                                     target_override = self.targets_comboBox.currentText())
