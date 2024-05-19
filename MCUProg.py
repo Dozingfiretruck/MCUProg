@@ -533,7 +533,7 @@ class MainWindow(QMainWindow):
     def mem_show(self, mem_type=None):
         self.mem_textBrowser.clear()
         self.mem_textBrowser.insertPlainText("   Address\t    0x00\t    0x04\t    0x08\t    0x0C\n")
-        self.file_path = "F:\\code\\codeup\\tiny_nfc\\build\\out\\tiny_nfc.axf"
+        # self.file_path = "F:\\code\\codeup\\tiny_nfc\\build\\out\\tiny_nfc.axf"
         if mem_type == 'chip':
 
             pass
