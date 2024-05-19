@@ -535,8 +535,21 @@ class MainWindow(QMainWindow):
         self.mem_textBrowser.insertPlainText("   Address\t    0x00\t    0x04\t    0x08\t    0x0C\n")
         # self.file_path = "F:\\code\\codeup\\tiny_nfc\\build\\out\\tiny_nfc.axf"
         if mem_type == 'chip':
+            if self.session and self.session.is_open:
+                target = self.session.board.target
+                boot_memory = target.get_memory_map().get_boot_memory()
+                boot_memory_start = boot_memory.start
+                boot_memory_end = boot_memory.end
+                while boot_memory_start < boot_memory_end:
+                    if boot_memory_start % 16 == 0:
+                        self.mem_textBrowser.insertPlainText("0x%08X : " % boot_memory_start)
+                    self.mem_textBrowser.insertPlainText("0x%08X" % target.read32(boot_memory_start))
+                    boot_memory_start += 4
+                    if boot_memory_start % 16 == 0:
+                        self.mem_textBrowser.insertPlainText("\n")
+                    else:
+                        self.mem_textBrowser.insertPlainText("\t")
 
-            pass
         elif mem_type == 'file'and self.file_path != '':
             if self.file_path.endswith('.bin'):
                 with open(self.file_path, 'rb') as f:
