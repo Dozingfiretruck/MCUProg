@@ -63,9 +63,11 @@ mcuprog_tool_info = '''这是一个MCU烧录工具
 
 版本: V{0}
 作者: {1}
-作者仓库: 
-https://github.com/Dozingfiretruck
-https://gitee.com/Dozingfiretruck
+
+作者邮箱: dozingfiretruck@qq.com
+作者仓库:
+github: https://github.com/Dozingfiretruck
+gitee: https://gitee.com/Dozingfiretruck
 
 感谢:
 PySide6: V{2}
@@ -533,7 +535,7 @@ class MainWindow(QMainWindow):
     def mem_show(self, mem_type=None):
         self.mem_textBrowser.clear()
         self.mem_textBrowser.insertPlainText("   Address\t    0x00\t    0x04\t    0x08\t    0x0C\n")
-        # self.file_path = "F:\\code\\codeup\\tiny_nfc\\build\\out\\tiny_nfc.axf"
+        # self.file_path = "F:\\code\\codeup\\tiny_nfc\\build\\out\\tiny_nfc.elf"
         if mem_type == 'chip':
             if self.session and self.session.is_open:
                 target = self.session.board.target
@@ -583,13 +585,101 @@ class MainWindow(QMainWindow):
                         num = struct.unpack('<IIII', data)
                         self.mem_textBrowser.insertPlainText("0x%08X\t0x%08X\t0x%08X\t0x%08X\t0x%08X\n" % (base_address,num[0],num[1],num[2],num[3]))
                         base_address += 16
+
             elif self.file_path.endswith(('.elf', '.axf')):
                 with open(self.file_path, 'rb') as f:
+                    if f.read(4) != b'\x7fELF':
+                        return
+                    if f.read(1) != b'\x01':
+                        return
+                    EI_DATA = f.read(1)
+                    if EI_DATA == b'\x01':
+                        print("Little Endian")
+                    elif EI_DATA == b'\x02':
+                        print("Big Endian")
+                    else:
+                        return
+                    if f.read(1) != b'\x01':
+                        return
+                    EI_OSABI = f.read(1)
+                    EI_ABIVERSION = f.read(1)
+                    EI_PAD = f.read(7)
+                    
+                    if f.read(2) != b'\x02\x00':
+                        return
+                    e_machine = f.read(2)
+                    if f.read(4) != b'\x01\x00\x00\x00':
+                        return
+                    e_entry = f.read(4)
+                    a = struct.unpack('<I', e_entry)
+                    print("Entry point: 0x%08X" % a[0])
 
+                    e_phoff = f.read(4)
+                    a = struct.unpack('<I', e_phoff) # 
+                    print("e_phoff: 0x%08X" % a[0])
+                    e_shoff = f.read(4)
+                    a = struct.unpack('<I', e_shoff) # 
+                    print("e_shoff: 0x%08X" % a[0])
+                    e_flags = f.read(4)
+
+                    e_ehsize = f.read(2)
+                    a = struct.unpack('<H', e_ehsize)
+                    print("e_ehsize: 0x%04X" % a[0])
+                    e_phentsize = f.read(2)
+                    a = struct.unpack('<H', e_phentsize)
+                    print("e_phentsize: 0x%04X" % a[0])
+                    e_phnum = f.read(2)
+                    a = struct.unpack('<H', e_phnum)
+                    print("e_phnum: 0x%04X" % a[0])
+                    e_shentsize = f.read(2)
+                    a = struct.unpack('<H', e_shentsize)
+                    print("e_shentsize: 0x%04X" % a[0])
+                    e_shnum = f.read(2)#7
+                    e_shstrndx = f.read(2)#6
+
+                    # print(e_entry,e_phoff,e_shoff,e_flags,e_ehsize,e_phentsize,e_phnum,e_shentsize,e_shnum,e_shstrndx)
+                    
                     pass
             elif self.file_path.endswith('.hex'):
                 with open(self.file_path, 'r') as f:
-                    pass
+                    ULBA = 0
+                    while True:
+                        data = f.readline()
+                        if data[0]!=':':
+                            return
+                        LOAD_RECLEN = int(data[1:3],16)
+                        OFFSET = int(data[3:7],16)
+                        RECTYP = int(data[7:9],16)
+                        match RECTYP:
+                            case 0:# 数据记录
+                                base_address = ULBA<<16 | OFFSET
+                                self.mem_textBrowser.insertPlainText("0x%08X" % (base_address))
+                                for i in range(LOAD_RECLEN//4):
+                                    self.mem_textBrowser.insertPlainText("\t0x%08X" % struct.unpack('<I', int(data[9+i*8:9+i*8+8],16).to_bytes(length=4, byteorder='big'))[0])
+                                self.mem_textBrowser.insertPlainText("\n")
+                            case 1:# 文件结束
+                                return
+                            case 2:# 扩展段地址-16位扩展段地址的段基址 SBA: 0:3 为0 4:19 USBA
+                                USBA = int(data[9:9+LOAD_RECLEN*2],16)
+                                # print(USBA)
+                                pass
+                            case 3:# 开始段地址-目标文件的执行起始地址-CS 和 IP 寄存器的 20 位段地址
+                                CS_IP = int(data[9:9+LOAD_RECLEN*2],16)
+                                # print(CS_IP)
+                            case 4:# 扩展线性地址 扩展段线性地址的高16位,低16位在LOAD OFFSET中
+                                ULBA = int(data[9:9+LOAD_RECLEN*2],16)
+                                # print(ULBA)
+                                # CHKSUM = data[13:17]
+                                # print(CHKSUM)
+                                pass
+                            case 5:# 开始线性地址-目标文件的执行起始地址-EIP 寄存器的 32 位线性地址
+                                EIP = int(data[9:9+LOAD_RECLEN*2],16)
+                                # print(EIP)
+                                pass
+                            case _:
+                                return
+                        # 数据校验 CHKSUM 忽略
+
     def programmer_finished(self):
         print("programmer_finished")
 
