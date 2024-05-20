@@ -15,10 +15,12 @@ PySide6: 6.7.0
 
 ## 支持功能
 
-- 支持daplinkv1、daplinkv2、stlink、jlink烧录器
-- 支持烧录时可选擦除芯片
-- 支持自定义烧录地址
+- 支持Daplink V1、Daplink V2、stlink、Jlink烧录器
 - 支持自定义本地pack文件以支持自定义芯片
+- 支持读取芯片数据
+- 支持读取烧录固件数据(目前支持bin、hex，elf、axf后续支持)
+- 支持烧录时可选擦除芯片
+- 支持bin固件自定义烧录地址
 
 ## 注意事项
 
