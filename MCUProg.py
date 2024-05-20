@@ -46,7 +46,7 @@ from pyocd._version import version as pyocd_version
 
 from pyocd.target.pack.cmsis_pack import CmsisPack
 
-version = "0.0.6"
+version = "0.0.7"
 author = "打盹的消防车"
 
 if getattr(sys, 'frozen', False):
