@@ -46,7 +46,7 @@ from pyocd._version import version as pyocd_version
 
 from pyocd.target.pack.cmsis_pack import CmsisPack
 
-version = "0.0.7"
+version = "0.0.8"
 author = "打盹的消防车"
 
 if getattr(sys, 'frozen', False):
@@ -57,23 +57,21 @@ else:
     exe_dir = run_dir
 
 icon_path = os.path.join(run_dir,"icons","tool_icon.ico")
-ui_font_path = os.path.join(run_dir,"resources","OPPOSans-regular.ttf")
+ui_font_path = os.path.join(run_dir,"resources","HarmonyOS_Sans_SC_Regular.ttf")
 
-mcuprog_tool_info = '''这是一个MCU烧录工具
-
-版本: V{0}
-作者: {1}
-
-作者邮箱: dozingfiretruck@qq.com
-作者仓库:
-github: https://github.com/Dozingfiretruck
-gitee: https://gitee.com/Dozingfiretruck
-
-感谢:
-PySide6: V{2}
-pyocd: V{3}
-UI字体: OPPOSans
-'''.format(version,author,PySide6_version,pyocd_version)
+mcuprog_tool_info = '''
+<h1>这是一个MCU烧录工具</h1>
+<p>版本: V{0}<br>
+作者: {1}<hr>
+作者邮箱: dozingfiretruck@qq.com<br>
+作者仓库:<br>
+github: <a href="https://github.com/Dozingfiretruck">https://github.com/Dozingfiretruck</a><br>
+gitee: <a href="https://gitee.com/Dozingfiretruck">https://gitee.com/Dozingfiretruck</a><hr>
+感谢:<br>
+PySide: V{2}<br>
+pyocd: V{3}<br>
+UI字体: HarmonyOS_Sans<br></p>
+'''
 
 class QComboBox2(QComboBox):
     pop_up = Signal()
@@ -718,9 +716,9 @@ class MainWindow(QMainWindow):
 
         about_label = QLabel(about_Dialog)
         about_label.setObjectName(u"about_label")
-        about_label.setGeometry(QRect(20, 20, 300, 300))
-
-        about_label.setText(QCoreApplication.translate("MCUProg", mcuprog_tool_info, None))
+        about_label.setGeometry(QRect(20, 20, 280, 280))
+        about_label.setOpenExternalLinks(True)
+        about_label.setText(QCoreApplication.translate("MCUProg", mcuprog_tool_info.format(version,author,PySide6_version,pyocd_version), None))
 
         about_Dialog.exec()
     
