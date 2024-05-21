@@ -402,7 +402,7 @@ class MainWindow(QMainWindow):
         self.downloard_label.setText(QCoreApplication.translate("MCUProg", u"烧录器", None))
         self.file_label.setText(QCoreApplication.translate("MCUProg", u"烧录固件", None))
         self.speed_label.setText(QCoreApplication.translate("MCUProg", u"烧录速度", None))
-        self.base_address_label.setText(QCoreApplication.translate("MCUProg", u"烧录地址(.bin固件生效)", None))
+        self.base_address_label.setText(QCoreApplication.translate("MCUProg", u"烧录地址(bin固件生效)", None))
         self.base_address_lineEdit.setText(QCoreApplication.translate("MCUProg", u"0x08000000", None))
         self.chip_erase_checkBox.setText(QCoreApplication.translate("MCUProg", u"擦除芯片", None))
         
@@ -516,13 +516,13 @@ class MainWindow(QMainWindow):
             # rom_region = memory_map.get_boot_memory()
             self.chip_name.setText(target.part_number)
             if ram_region:
-                self.chip_ram.setText("start:0x%08X end:0x%08X length:0x%08X " % (ram_region.start, ram_region.end, ram_region.length))
+                self.chip_ram.setText("addr: 0x%08X-0x%08X len: 0x%08X access: %s" % (ram_region.start, ram_region.end, ram_region.length, ram_region.access))
             if flash_region:
-                self.chip_flash.setText("start:0x%08X end:0x%08X length:0x%08X " % (flash_region.start, flash_region.end, flash_region.length))
+                self.chip_flash.setText("addr: 0x%08X-0x%08X len: 0x%08X access: %s" % (flash_region.start, flash_region.end, flash_region.length, ram_region.access))
             if rom_region:
-                self.chip_rom.setText("start:0x%08X end:0x%08X length:0x%08X " % (rom_region.start, rom_region.end, rom_region.length))
+                self.chip_rom.setText("addr: 0x%08X-0x%08X len: 0x%08X access: %s" % (rom_region.start, rom_region.end, rom_region.length, ram_region.access))
             if other_region:
-                self.chip_other.setText("start:0x%08X end:0x%08X length:0x%08X " % (other_region.start, other_region.end, other_region.length))
+                self.chip_other.setText("addr: 0x%08X-0x%08X len: 0x%08X access: %s" % (other_region.start, other_region.end, other_region.length, ram_region.access))
         else:
             self.chip_name.clear()
             self.chip_ram.clear()
