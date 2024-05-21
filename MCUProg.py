@@ -59,20 +59,6 @@ else:
 icon_path = os.path.join(run_dir,"icons","tool_icon.ico")
 ui_font_path = os.path.join(run_dir,"resources","HarmonyOS_Sans_SC_Regular.ttf")
 
-mcuprog_tool_info = '''
-<h1>这是一个MCU烧录工具</h1>
-<p>版本: V{0}<br>
-作者: {1}<hr>
-作者邮箱: dozingfiretruck@qq.com<br>
-作者仓库:<br>
-github: <a href="https://github.com/Dozingfiretruck">https://github.com/Dozingfiretruck</a><br>
-gitee: <a href="https://gitee.com/Dozingfiretruck">https://gitee.com/Dozingfiretruck</a><hr>
-感谢:<br>
-PySide: V{2}<br>
-pyocd: V{3}<br>
-UI字体: HarmonyOS_Sans<br></p>
-'''
-
 class QComboBox2(QComboBox):
     pop_up = Signal()
     def showPopup(self):
@@ -129,6 +115,20 @@ class MainWindow(QMainWindow):
     Probe = None
     session = None
     frequency = {'10MHZ':10000000,'5MHZ':5000000,'2MHZ':2000000,'1MHZ':1000000,'500kHZ':500000,'200kHZ':200000,'100kHZ':100000,'50kHZ':50000,'20kHZ':20000,'10kHZ':10000,'5kHZ':5000}
+    mcuprog_tool_info = '''
+                        <h1>这是一个MCU烧录工具</h1>
+                        <p>版本: V{0}<br>
+                        作者: {1}<hr>
+                        作者邮箱: dozingfiretruck@qq.com<br>
+                        作者仓库:<br>
+                        github: <a href="https://github.com/Dozingfiretruck">https://github.com/Dozingfiretruck</a><br>
+                        gitee: <a href="https://gitee.com/Dozingfiretruck">https://gitee.com/Dozingfiretruck</a><hr>
+                        感谢:<br>
+                        PySide: V{2}<br>
+                        pyocd: V{3}<br>
+                        UI字体: {4}<br></p>
+                        '''
+    
     def __init__(self, parent = None) :
         super().__init__(parent)
         if not self.objectName():
@@ -142,9 +142,8 @@ class MainWindow(QMainWindow):
         icon = QIcon(icon_path)
         self.setWindowIcon(icon)
         # 字体
-        QFontDatabase.addApplicationFont(ui_font_path)
-        ui_font = QFont("HarmonyOS Sans",10,QFont.Medium)
-        self.setFont(ui_font)
+        self.font_family = QFontDatabase.applicationFontFamilies(QFontDatabase.addApplicationFont(ui_font_path))[0]
+        self.setFont(QFont(self.font_family,10,QFont.Normal))
 
         self.centralwidget = QWidget(self)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -718,7 +717,7 @@ class MainWindow(QMainWindow):
         about_label.setObjectName(u"about_label")
         about_label.setGeometry(QRect(20, 20, 280, 280))
         about_label.setOpenExternalLinks(True)
-        about_label.setText(QCoreApplication.translate("MCUProg", mcuprog_tool_info.format(version,author,PySide6_version,pyocd_version), None))
+        about_label.setText(QCoreApplication.translate("MCUProg", self.mcuprog_tool_info.format(version,author,PySide6_version,pyocd_version,self.font_family), None))
 
         about_Dialog.exec()
     
