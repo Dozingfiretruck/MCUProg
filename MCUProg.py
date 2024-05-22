@@ -49,10 +49,10 @@ from pyocd.target.pack.cmsis_pack import CmsisPack
 version = "0.0.8"
 author = "打盹的消防车"
 
-if getattr(sys, 'frozen', False):
-    run_dir = sys._MEIPASS
-    exe_dir = os.path.dirname(os.path.realpath(sys.executable))
-else:
+try:
+    run_dir = os.path.dirname(os.path.abspath(__file__))
+    exe_dir = os.path.join(__compiled__.containing_dir)
+except NameError:
     run_dir = os.path.dirname(os.path.abspath(__file__))
     exe_dir = run_dir
 
@@ -706,16 +706,16 @@ class MainWindow(QMainWindow):
 
     def click_about(self):
         about_Dialog = QDialog(self)
-        about_Dialog.resize(320, 320)
-        about_Dialog.setMinimumSize(QSize(320, 320))
-        about_Dialog.setMaximumSize(QSize(320, 320))
+        about_Dialog.resize(480, 320)
+        about_Dialog.setMinimumSize(QSize(480, 320))
+        about_Dialog.setMaximumSize(QSize(480, 320))
         about_Dialog.setWindowTitle("关于")
         icon = QIcon(icon_path)
         about_Dialog.setWindowIcon(icon)
 
         about_label = QLabel(about_Dialog)
         about_label.setObjectName(u"about_label")
-        about_label.setGeometry(QRect(20, 20, 280, 280))
+        about_label.setGeometry(QRect(20, 20, 480-40, 320-40))
         about_label.setOpenExternalLinks(True)
         about_label.setText(QCoreApplication.translate("MCUProg", self.mcuprog_tool_info.format(version,author,PySide6_version,pyocd_version,self.font_family), None))
 
