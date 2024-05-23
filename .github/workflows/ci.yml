@@ -1,0 +1,31 @@
+
+name: MCUProg
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
+    - name: Install dependencies
+      run: |
+        sudo apt update -y
+        sudo apt upgrade -y
+        sudo apt install clang
+        python -m pip install --upgrade pip
+        pip install pyside6
+        pip install pyocd
+        pip install nuitka
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Build MCUProg
+      run: |
+        python -m nuitka --main=MCUProg.py
+
