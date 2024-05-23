@@ -1,5 +1,7 @@
 [**English**](./README.md)  | **中文**
 
+![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
+
 # MCUProg
 
 ## 介绍
@@ -12,6 +14,12 @@ MCUProg是一款基于pyocd+PySide6的MUC烧录上位机软件(此软件只是�
 
 pyocd: 0.36.0
 PySide6: 6.7.0
+
+## 支持平台
+
+- [x] Windows
+- [x] Linux
+- [ ] Macos
 
 ## 支持功能
 

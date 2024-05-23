@@ -1,5 +1,7 @@
 **English** | [中文](./README_zh.md) 
 
+![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
+
 # MCUProg
 
 ## Introduction
@@ -12,6 +14,12 @@ MCUProg is a MUC programming host computer software based on pyocd+PySide6 (this
 
 pyocd: 0.36.0
 PySide6: 6.7.0
+
+## Support platform 
+
+- [x] Windows
+- [x] Linux
+- [ ] Macos
 
 ## Support features
 
