@@ -48,7 +48,7 @@ from pyocd._version import version as pyocd_version
 
 from pyocd.target.pack.cmsis_pack import CmsisPack
 
-version = "0.0.8"
+version = "0.0.9"
 author = "打盹的消防车"
 
 try:
