@@ -1,0 +1,35 @@
+
+name: Windows
+run-name: Windows Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+        # cache: 'pip'
+    - name: Set up MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      # uses: microsoft/setup-msbuild@v2
+      # with:
+      #   vs-prerelease: true
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyside6
+        pip install pyocd
+        pip install nuitka
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Build MCUProg
+      run: |
+        python -m nuitka --main=MCUProg.py
+
