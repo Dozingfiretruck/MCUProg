@@ -28,7 +28,6 @@ jobs:
         pip install pyside6
         pip install pyocd
         pip install nuitka
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Build MCUProg
       run: |
         python -m nuitka --main=MCUProg.py
