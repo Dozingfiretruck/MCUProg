@@ -19,9 +19,6 @@ jobs:
         # cache: 'pip'
     - name: Set up MSVC
       uses: ilammy/msvc-dev-cmd@v1
-      # uses: microsoft/setup-msbuild@v2
-      # with:
-      #   vs-prerelease: true
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
