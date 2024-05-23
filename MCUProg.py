@@ -17,9 +17,11 @@
 # nuitka-project: --include-data-dir=./resources=./resources
 # nuitka-project-if: {OS} in ("Windows"):
 #    nuitka-project: --windows-icon-from-ico=./icons/tool_icon.ico
-# nuitka-project-if: {OS} in ("Linux", "Darwin", "FreeBSD"):
+# nuitka-project-if: {OS} in ("Linux", "FreeBSD"):
 #    nuitka-project: --linux-icon=./icons/tool_icon.ico
-
+# nuitka-project-if: {OS} in ("Darwin"):
+#    nuitka-project: --macos-create-app-bundle
+#    nuitka-project: --macos-app-icon=./icons/tool_icon.ico
 
 
 import sys,os,struct
