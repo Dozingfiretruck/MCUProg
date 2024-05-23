@@ -1,36 +1,33 @@
 
-name: Macos
-run-name: Macos Build
+# name: Macos
+# run-name: Macos Build
 
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-jobs:
-  build:
-    runs-on: macos-latest
-    steps:
-    - name: Check out repository
-      uses: actions/checkout@v4
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyside6
-        pip install pyocd
-        pip install imageio
-        pip install nuitka
-    - name: Build Executable with Nuitka
-      uses: Nuitka/Nuitka-Action@main
-      with:
-        nuitka-version: main
-        script-name: MCUProg.py
+# on:
+#   push:
+#     branches: [ "master" ]
+#   pull_request:
+#     branches: [ "master" ]
+# jobs:
+#   build:
+#     runs-on: macos-latest
+#     steps:
+#     - name: Check out repository
+#       uses: actions/checkout@v4
+#     - name: Set up Python 3.11
+#       uses: actions/setup-python@v5
+#       with:
+#         python-version: "3.11"
+#     - name: Install dependencies
+#       run: |
+#         python -m pip install --upgrade pip
+#         pip install pyside6
+#         pip install pyocd
+#         pip install imageio
+#         pip install nuitka
+#     - name: Build Executable with Nuitka
+#       uses: Nuitka/Nuitka-Action@main
+#       with:
+#         nuitka-version: main
+#         script-name: MCUProg.py
 
-    # - name: Build MCUProg
-    #   run: |
-    #     echo Yes |python -m nuitka --main=MCUProg.py
 
