@@ -67,47 +67,203 @@ class QComboBox2(QComboBox):
         self.pop_up.emit()
         super(QComboBox2, self).showPopup()
 
-class Thread2(QThread):
-    finish = Signal(str)
-    def __init__(self, func, *args):
-        super().__init__()
-        self.func = func
-        self.args = args
-    def run(self):
-        res = self.func(*self.args)
-        # 任务完成后发出信号
-        self.finish.emit(res)
+# class Thread2(QThread):
+#     finish = Signal(str)
+#     def __init__(self, func, *args):
+#         super().__init__()
+#         self.func = func
+#         self.args = args
+#     def run(self):
+#         res = self.func(*self.args)
+#         # 任务完成后发出信号
+#         self.finish.emit(res)
 
-def programmer(MainWindow):
-    board = MainWindow.session.board
-    target = board.target
+class Worker(QObject):
+    mem_text_show = Signal(str)
+    programmer_finish = Signal()
+    mem_read_finish = Signal()
 
-    if not MainWindow.file_path.endswith('.bin'):
-        base_address = None
-    else:
-        if MainWindow.base_address_lineEdit.text() == '':
+    def __init__(self):
+            super().__init__()
+
+    def programmer(self,MainWindow):
+        board = MainWindow.session.board
+        target = board.target
+
+        if not MainWindow.file_path.endswith('.bin'):
             base_address = None
         else:
-            base_address = int(MainWindow.base_address_lineEdit.text(), base=0)
+            if MainWindow.base_address_lineEdit.text() == '':
+                base_address = None
+            else:
+                base_address = int(MainWindow.base_address_lineEdit.text(), base=0)
 
-    if MainWindow.chip_erase_checkBox.isChecked():
-        chip_erase = "chip"
-    else:
-        chip_erase = "auto"
+        if MainWindow.chip_erase_checkBox.isChecked():
+            chip_erase = "chip"
+        else:
+            chip_erase = "auto"
 
-    # Load firmware into device.
-    FileProgrammer(MainWindow.session,
-                    chip_erase=chip_erase,
-                    smart_flash=False,
-                    trust_crc=False,
-                    keep_unwritten=True,
-                    no_reset=True,
-                    progress = MainWindow.progress
-                    ).program(MainWindow.file_path,
-                            base_address=base_address)
-    # Reset
-    target.reset_and_halt()
-    
+        # Load firmware into device.
+        FileProgrammer(MainWindow.session,
+                        chip_erase=chip_erase,
+                        smart_flash=False,
+                        trust_crc=False,
+                        keep_unwritten=True,
+                        no_reset=True,
+                        progress = MainWindow.progress
+                        ).program(MainWindow.file_path,
+                                base_address=base_address)
+        # Reset
+        target.reset_and_halt()
+        self.programmer_finish.emit()
+
+    def mem_read(self,MainWindow,mem_type):
+        if mem_type == 'chip':
+            if MainWindow.session and MainWindow.session.is_open:
+                target = MainWindow.session.board.target
+                boot_memory = target.get_memory_map().get_boot_memory()
+                boot_memory_start = boot_memory.start
+                boot_memory_end = boot_memory.end
+                while boot_memory_start < boot_memory_end:
+                    if boot_memory_start % 16 == 0:
+                        self.mem_text_show.emit("0x%08X : " % boot_memory_start)
+                    self.mem_text_show.emit("0x%08X" % target.read32(boot_memory_start))
+                    boot_memory_start += 4
+                    if boot_memory_start % 16 == 0:
+                        self.mem_text_show.emit("\n")
+                    else:
+                        self.mem_text_show.emit("\t")
+
+        elif mem_type == 'file'and MainWindow.file_path != '':
+            if MainWindow.file_path.endswith('.bin'):
+                with open(MainWindow.file_path, 'rb') as f:
+                    # size = f.seek(0, os.SEEK_END)
+                    # print(size)
+                    # size = f.seek(0, 0)
+                    base_address = 0
+                    if MainWindow.base_address_lineEdit.text() == '':
+                        if MainWindow.session:
+                            base_address = MainWindow.session.board.target.get_memory_map().get_boot_memory().start
+                    else:
+                        base_address = int(MainWindow.base_address_lineEdit.text(), base=0)
+                    while True:
+                        data = f.read(16)
+                        if len(data) != 16:
+                            match len(data)/4:
+                                case 1:
+                                    num = struct.unpack('<I', data)
+                                    self.mem_text_show.emit("0x%08X\t0x%08X\n" % (base_address,num[0]))
+                                    break
+                                case 2:
+                                    num = struct.unpack('<II', data)
+                                    self.mem_text_show.emit("0x%08X\t0x%08X\t0x%08X\n" % (base_address,num[0],num[1]))
+                                    break
+                                case 3:
+                                    num = struct.unpack('<III', data)
+                                    self.mem_text_show.emit("0x%08X\t0x%08X\t0x%08X\t0x%08X\n" % (base_address,num[0],num[1],num[2]))
+                                    break
+                                case _:
+                                    break
+                        num = struct.unpack('<IIII', data)
+                        self.mem_text_show.emit("0x%08X\t0x%08X\t0x%08X\t0x%08X\t0x%08X\n" % (base_address,num[0],num[1],num[2],num[3]))
+                        base_address += 16
+
+            elif MainWindow.file_path.endswith(('.elf', '.axf')):
+                # with open(MainWindow.file_path, 'rb') as f:
+                #     if f.read(4) != b'\x7fELF':
+                #         return
+                #     if f.read(1) != b'\x01':
+                #         return
+                #     EI_DATA = f.read(1)
+                #     if EI_DATA == b'\x01':
+                #         print("Little Endian")
+                #     elif EI_DATA == b'\x02':
+                #         print("Big Endian")
+                #     else:
+                #         return
+                #     if f.read(1) != b'\x01':
+                #         return
+                #     EI_OSABI = f.read(1)
+                #     EI_ABIVERSION = f.read(1)
+                #     EI_PAD = f.read(7)
+                    
+                #     if f.read(2) != b'\x02\x00':
+                #         return
+                #     e_machine = f.read(2)
+                #     if f.read(4) != b'\x01\x00\x00\x00':
+                #         return
+                #     e_entry = f.read(4)
+                #     a = struct.unpack('<I', e_entry)
+                #     print("Entry point: 0x%08X" % a[0])
+
+                #     e_phoff = f.read(4)
+                #     a = struct.unpack('<I', e_phoff) # 
+                #     print("e_phoff: 0x%08X" % a[0])
+                #     e_shoff = f.read(4)
+                #     a = struct.unpack('<I', e_shoff) # 
+                #     print("e_shoff: 0x%08X" % a[0])
+                #     e_flags = f.read(4)
+
+                #     e_ehsize = f.read(2)
+                #     a = struct.unpack('<H', e_ehsize)
+                #     print("e_ehsize: 0x%04X" % a[0])
+                #     e_phentsize = f.read(2)
+                #     a = struct.unpack('<H', e_phentsize)
+                #     print("e_phentsize: 0x%04X" % a[0])
+                #     e_phnum = f.read(2)
+                #     a = struct.unpack('<H', e_phnum)
+                #     print("e_phnum: 0x%04X" % a[0])
+                #     e_shentsize = f.read(2)
+                #     a = struct.unpack('<H', e_shentsize)
+                #     print("e_shentsize: 0x%04X" % a[0])
+                #     e_shnum = f.read(2)#7
+                #     e_shstrndx = f.read(2)#6
+
+                #     # print(e_entry,e_phoff,e_shoff,e_flags,e_ehsize,e_phentsize,e_phnum,e_shentsize,e_shnum,e_shstrndx)
+                pass
+
+            elif MainWindow.file_path.endswith('.hex'):
+                with open(MainWindow.file_path, 'r') as f:
+                    ULBA = 0
+                    while True:
+                        data = f.readline()
+                        if data[0]!=':':
+                            break
+                        LOAD_RECLEN = int(data[1:3],16)
+                        OFFSET = int(data[3:7],16)
+                        RECTYP = int(data[7:9],16)
+                        match RECTYP:
+                            case 0:# 数据记录
+                                base_address = ULBA<<16 | OFFSET
+                                self.mem_text_show.emit("0x%08X" % (base_address))
+                                for i in range(LOAD_RECLEN//4):
+                                    self.mem_text_show.emit("\t0x%08X" % struct.unpack('<I', int(data[9+i*8:9+i*8+8],16).to_bytes(length=4, byteorder='big'))[0])
+                                self.mem_text_show.emit("\n")
+                            case 1:# 文件结束
+                                break
+                            case 2:# 扩展段地址-16位扩展段地址的段基址 SBA: 0:3 为0 4:19 USBA
+                                USBA = int(data[9:9+LOAD_RECLEN*2],16)
+                                # print(USBA)
+                                pass
+                            case 3:# 开始段地址-目标文件的执行起始地址-CS 和 IP 寄存器的 20 位段地址
+                                CS_IP = int(data[9:9+LOAD_RECLEN*2],16)
+                                # print(CS_IP)
+                            case 4:# 扩展线性地址 扩展段线性地址的高16位,低16位在LOAD OFFSET中
+                                ULBA = int(data[9:9+LOAD_RECLEN*2],16)
+                                # print(ULBA)
+                                # CHKSUM = data[13:17]
+                                # print(CHKSUM)
+                                pass
+                            case 5:# 开始线性地址-目标文件的执行起始地址-EIP 寄存器的 32 位线性地址
+                                EIP = int(data[9:9+LOAD_RECLEN*2],16)
+                                # print(EIP)
+                                pass
+                            case _:
+                                break
+                        # 数据校验 CHKSUM 忽略
+        
+        self.mem_read_finish.emit()
+
 class MainWindow(QMainWindow):
     app_w = 960
     app_h = 480
@@ -117,6 +273,10 @@ class MainWindow(QMainWindow):
     Probe = None
     session = None
     frequency = {'10MHZ':10000000,'5MHZ':5000000,'2MHZ':2000000,'1MHZ':1000000,'500kHZ':500000,'200kHZ':200000,'100kHZ':100000,'50kHZ':50000,'20kHZ':20000,'10kHZ':10000,'5kHZ':5000}
+    
+    programmer = Signal(QMainWindow)
+    mem_read = Signal(QMainWindow,str)
+
     mcuprog_tool_info = '''
                         <h1>这是一个MCU烧录工具</h1>
                         <p>版本: V{0}<br>
@@ -388,6 +548,19 @@ class MainWindow(QMainWindow):
 
         QMetaObject.connectSlotsByName(self)
 
+        self.worker = Worker()
+        self.worker_thread = QThread()
+        self.worker.moveToThread(self.worker_thread)
+        self.programmer.connect(self.worker.programmer)
+        self.mem_read.connect(self.worker.mem_read)
+
+        self.worker.programmer_finish.connect(self.programmer_finished)
+        self.worker.mem_read_finish.connect(self.mem_read_finished)
+
+        self.worker.mem_text_show.connect(lambda text: self.mem_textBrowser.insertPlainText(text))
+
+        self.worker_thread.start()
+
         self.usb_selection()
         self.target_selection()
         self.mem_show()
@@ -535,161 +708,19 @@ class MainWindow(QMainWindow):
         self.mem_textBrowser.clear()
         self.mem_textBrowser.insertPlainText("   Address\t    0x00\t    0x04\t    0x08\t    0x0C\n")
         # self.file_path = "F:\\code\\codeup\\tiny_nfc\\build\\out\\tiny_nfc.elf"
-        if mem_type == 'chip':
-            if self.session and self.session.is_open:
-                target = self.session.board.target
-                boot_memory = target.get_memory_map().get_boot_memory()
-                boot_memory_start = boot_memory.start
-                boot_memory_end = boot_memory.end
-                while boot_memory_start < boot_memory_end:
-                    if boot_memory_start % 16 == 0:
-                        self.mem_textBrowser.insertPlainText("0x%08X : " % boot_memory_start)
-                    self.mem_textBrowser.insertPlainText("0x%08X" % target.read32(boot_memory_start))
-                    boot_memory_start += 4
-                    if boot_memory_start % 16 == 0:
-                        self.mem_textBrowser.insertPlainText("\n")
-                    else:
-                        self.mem_textBrowser.insertPlainText("\t")
-
-        elif mem_type == 'file'and self.file_path != '':
-            if self.file_path.endswith('.bin'):
-                with open(self.file_path, 'rb') as f:
-                    # size = f.seek(0, os.SEEK_END)
-                    # print(size)
-                    # size = f.seek(0, 0)
-                    base_address = 0
-                    if self.base_address_lineEdit.text() == '':
-                        if self.session:
-                            base_address = self.session.board.target.get_memory_map().get_boot_memory().start
-                    else:
-                        base_address = int(self.base_address_lineEdit.text(), base=0)
-                    while True:
-                        data = f.read(16)
-                        if len(data) != 16:
-                            match len(data)/4:
-                                case 1:
-                                    num = struct.unpack('<I', data)
-                                    self.mem_textBrowser.insertPlainText("0x%08X\t0x%08X\n" % (base_address,num[0]))
-                                    break
-                                case 2:
-                                    num = struct.unpack('<II', data)
-                                    self.mem_textBrowser.insertPlainText("0x%08X\t0x%08X\t0x%08X\n" % (base_address,num[0],num[1]))
-                                    break
-                                case 3:
-                                    num = struct.unpack('<III', data)
-                                    self.mem_textBrowser.insertPlainText("0x%08X\t0x%08X\t0x%08X\t0x%08X\n" % (base_address,num[0],num[1],num[2]))
-                                    break
-                                case _:
-                                    break
-                        num = struct.unpack('<IIII', data)
-                        self.mem_textBrowser.insertPlainText("0x%08X\t0x%08X\t0x%08X\t0x%08X\t0x%08X\n" % (base_address,num[0],num[1],num[2],num[3]))
-                        base_address += 16
-
-            elif self.file_path.endswith(('.elf', '.axf')):
-                with open(self.file_path, 'rb') as f:
-                    if f.read(4) != b'\x7fELF':
-                        return
-                    if f.read(1) != b'\x01':
-                        return
-                    EI_DATA = f.read(1)
-                    if EI_DATA == b'\x01':
-                        print("Little Endian")
-                    elif EI_DATA == b'\x02':
-                        print("Big Endian")
-                    else:
-                        return
-                    if f.read(1) != b'\x01':
-                        return
-                    EI_OSABI = f.read(1)
-                    EI_ABIVERSION = f.read(1)
-                    EI_PAD = f.read(7)
-                    
-                    if f.read(2) != b'\x02\x00':
-                        return
-                    e_machine = f.read(2)
-                    if f.read(4) != b'\x01\x00\x00\x00':
-                        return
-                    e_entry = f.read(4)
-                    a = struct.unpack('<I', e_entry)
-                    print("Entry point: 0x%08X" % a[0])
-
-                    e_phoff = f.read(4)
-                    a = struct.unpack('<I', e_phoff) # 
-                    print("e_phoff: 0x%08X" % a[0])
-                    e_shoff = f.read(4)
-                    a = struct.unpack('<I', e_shoff) # 
-                    print("e_shoff: 0x%08X" % a[0])
-                    e_flags = f.read(4)
-
-                    e_ehsize = f.read(2)
-                    a = struct.unpack('<H', e_ehsize)
-                    print("e_ehsize: 0x%04X" % a[0])
-                    e_phentsize = f.read(2)
-                    a = struct.unpack('<H', e_phentsize)
-                    print("e_phentsize: 0x%04X" % a[0])
-                    e_phnum = f.read(2)
-                    a = struct.unpack('<H', e_phnum)
-                    print("e_phnum: 0x%04X" % a[0])
-                    e_shentsize = f.read(2)
-                    a = struct.unpack('<H', e_shentsize)
-                    print("e_shentsize: 0x%04X" % a[0])
-                    e_shnum = f.read(2)#7
-                    e_shstrndx = f.read(2)#6
-
-                    # print(e_entry,e_phoff,e_shoff,e_flags,e_ehsize,e_phentsize,e_phnum,e_shentsize,e_shnum,e_shstrndx)
-                    
-                    pass
-            elif self.file_path.endswith('.hex'):
-                with open(self.file_path, 'r') as f:
-                    ULBA = 0
-                    while True:
-                        data = f.readline()
-                        if data[0]!=':':
-                            return
-                        LOAD_RECLEN = int(data[1:3],16)
-                        OFFSET = int(data[3:7],16)
-                        RECTYP = int(data[7:9],16)
-                        match RECTYP:
-                            case 0:# 数据记录
-                                base_address = ULBA<<16 | OFFSET
-                                self.mem_textBrowser.insertPlainText("0x%08X" % (base_address))
-                                for i in range(LOAD_RECLEN//4):
-                                    self.mem_textBrowser.insertPlainText("\t0x%08X" % struct.unpack('<I', int(data[9+i*8:9+i*8+8],16).to_bytes(length=4, byteorder='big'))[0])
-                                self.mem_textBrowser.insertPlainText("\n")
-                            case 1:# 文件结束
-                                return
-                            case 2:# 扩展段地址-16位扩展段地址的段基址 SBA: 0:3 为0 4:19 USBA
-                                USBA = int(data[9:9+LOAD_RECLEN*2],16)
-                                # print(USBA)
-                                pass
-                            case 3:# 开始段地址-目标文件的执行起始地址-CS 和 IP 寄存器的 20 位段地址
-                                CS_IP = int(data[9:9+LOAD_RECLEN*2],16)
-                                # print(CS_IP)
-                            case 4:# 扩展线性地址 扩展段线性地址的高16位,低16位在LOAD OFFSET中
-                                ULBA = int(data[9:9+LOAD_RECLEN*2],16)
-                                # print(ULBA)
-                                # CHKSUM = data[13:17]
-                                # print(CHKSUM)
-                                pass
-                            case 5:# 开始线性地址-目标文件的执行起始地址-EIP 寄存器的 32 位线性地址
-                                EIP = int(data[9:9+LOAD_RECLEN*2],16)
-                                # print(EIP)
-                                pass
-                            case _:
-                                return
-                        # 数据校验 CHKSUM 忽略
+        if mem_type:
+            self.mem_toolButton.setEnabled(False)
+            self.mem_read.emit(self,mem_type)
 
     def programmer_finished(self):
-        print("programmer_finished")
+        self.flash_button.setEnabled(True)
+
+    def mem_read_finished(self):
+        self.mem_toolButton.setEnabled(True)
 
     def flash_button_click(self):
-        # print("flash_button_click")
-        self.flash_progressBar.reset()
-        self.flash_progressBar.setValue(0)
-        if self.session and self.session.is_open and self.file_path!= '':
-            self.thread_programmer = Thread2(programmer,self)
-            self.thread_programmer.finish.connect(self.programmer_finished)
-            self.thread_programmer.start()
+        self.flash_button.setEnabled(False)
+        self.programmer.emit(self)
 
     def usb_probe(self):
         self.allProbes = ConnectHelper.get_all_connected_probes(False, None, False)
