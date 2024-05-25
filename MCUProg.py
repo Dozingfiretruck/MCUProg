@@ -67,17 +67,6 @@ class QComboBox2(QComboBox):
         self.pop_up.emit()
         super(QComboBox2, self).showPopup()
 
-# class Thread2(QThread):
-#     finish = Signal(str)
-#     def __init__(self, func, *args):
-#         super().__init__()
-#         self.func = func
-#         self.args = args
-#     def run(self):
-#         res = self.func(*self.args)
-#         # 任务完成后发出信号
-#         self.finish.emit(res)
-
 class Worker(QObject):
     mem_text_show = Signal(str)
     programmer_finish = Signal()
@@ -274,6 +263,7 @@ class MainWindow(QMainWindow):
     session = None
     frequency = {'10MHZ':10000000,'5MHZ':5000000,'2MHZ':2000000,'1MHZ':1000000,'500kHZ':500000,'200kHZ':200000,'100kHZ':100000,'50kHZ':50000,'20kHZ':20000,'10kHZ':10000,'5kHZ':5000}
     
+    worker_thread = None
     programmer = Signal(QMainWindow)
     mem_read = Signal(QMainWindow,str)
 
@@ -318,14 +308,11 @@ class MainWindow(QMainWindow):
         self.statusbar.setObjectName(u"statusbar")
         self.setStatusBar(self.statusbar)
 
-        # 菜单栏 - 菜单
-        self.menu_file = self.menubar.addMenu(QCoreApplication.translate("MCUProg", "菜单", None))
-        # # 菜单 - 安装pack
-        # self.install_pack = self.menu_file.addAction(QCoreApplication.translate("MCUProg", "安装pack", None))
-        # self.install_pack.triggered.connect(self.click_install_pack)
+        # # 菜单栏 - 菜单
+        # self.menu_file = self.menubar.addMenu(QCoreApplication.translate("MCUProg", "菜单", None))
         # 菜单 - 退出
-        self.action_file_exit = self.menu_file.addAction(QCoreApplication.translate("MCUProg", "退出", None))
-        self.action_file_exit.triggered.connect(self.click_exit)
+        # self.action_file_exit = self.menu_file.addAction(QCoreApplication.translate("MCUProg", "退出", None))
+        # self.action_file_exit.triggered.connect(self.click_exit)
         # 帮助
         self.menu_file = self.menubar.addMenu(QCoreApplication.translate("MCUProg", "帮助", None))
         # 帮助 -关于
@@ -754,9 +741,14 @@ class MainWindow(QMainWindow):
 
         about_Dialog.exec()
     
-    def click_exit(self):
-        sys.exit(QApplication.instance().exec())
+    # def click_exit(self):
+    #     sys.exit(QApplication.instance().exec())
 
+    def closeEvent(self, event):
+        if hasattr(self, 'worker_thread'):
+            self.worker_thread.quit()
+            self.worker_thread.wait()
+        event.accept()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
