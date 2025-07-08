@@ -12,10 +12,10 @@
 
 # The output directory and other options
 # nuitka-project: --output-dir=build
-# nuitka-project: --disable-console
 # nuitka-project: --include-data-dir=./icons=./icons
 # nuitka-project: --include-data-dir=./resources=./resources
 # nuitka-project-if: {OS} in ("Windows"):
+#    nuitka-project: --windows-console-mode=disable
 #    nuitka-project: --windows-icon-from-ico=./icons/tool_icon.ico
 # nuitka-project-if: {OS} in ("Linux", "FreeBSD"):
 #    nuitka-project: --linux-icon=./icons/tool_icon.ico
@@ -521,36 +521,12 @@ class MainWindow(QMainWindow):
         self.gridLayout_info.addWidget(self.logs_label, 5, 0, 1, 1)
         self.gridLayout_info.addWidget(self.logs, 5, 1, 1, 7)
         
-        # 信号与槽
-        self.pack_selection_button.clicked.connect(self.click_choose_pack)
-        self.usb_comboBox.pop_up.connect(self.usb_selection)
-        self.usb_connect_button.clicked.connect(self.usb_connect_button_click)
-        self.targets_comboBox.pop_up.connect(self.target_selection)
-        self.file_selection_button.clicked.connect(self.file_selection_button_click)
-        self.flash_button.clicked.connect(self.flash_button_click)
-
         self.setCentralWidget(self.centralwidget)
-
         self.retranslateUi()
 
         QMetaObject.connectSlotsByName(self)
 
-        self.worker = Worker()
-        self.worker_thread = QThread()
-        self.worker.moveToThread(self.worker_thread)
-        self.programmer.connect(self.worker.programmer)
-        self.mem_read.connect(self.worker.mem_read)
-
-        self.worker.programmer_finish.connect(self.programmer_finished)
-        self.worker.mem_read_finish.connect(self.mem_read_finished)
-
-        self.worker.mem_text_show.connect(lambda text: self.mem_textBrowser.insertPlainText(text))
-
-        self.worker_thread.start()
-
-        self.usb_selection()
-        self.target_selection()
-        self.mem_show()
+        self.init_extra()
 
     def retranslateUi(self):
         self.pack_label.setText(QCoreApplication.translate("MCUProg", u"pack文件", None))
@@ -574,7 +550,30 @@ class MainWindow(QMainWindow):
         self.chip_rom_label.setText(QCoreApplication.translate("MCUProg", u"ROM:", None))
         self.chip_other_label.setText(QCoreApplication.translate("MCUProg", u"OTHER:", None))
         self.logs_label.setText(QCoreApplication.translate("MCUProg", u"日志:", None))
-    
+
+    def init_extra(self):
+        self.worker = Worker()
+        self.worker_thread = QThread()
+        self.worker.moveToThread(self.worker_thread)
+        self.programmer.connect(self.worker.programmer)
+        self.mem_read.connect(self.worker.mem_read)
+        self.worker.programmer_finish.connect(self.programmer_finished)
+        self.worker.mem_read_finish.connect(self.mem_read_finished)
+        self.worker.mem_text_show.connect(lambda text: self.mem_textBrowser.insertPlainText(text))
+        self.worker_thread.start()
+
+        # 信号与槽
+        self.pack_selection_button.clicked.connect(self.click_choose_pack)
+        self.usb_comboBox.pop_up.connect(self.usb_selection)
+        self.usb_connect_button.clicked.connect(self.usb_connect_button_click)
+        self.targets_comboBox.pop_up.connect(self.target_selection)
+        self.file_selection_button.clicked.connect(self.file_selection_button_click)
+        self.flash_button.clicked.connect(self.flash_button_click)
+
+        self.usb_selection()
+        self.target_selection()
+        self.mem_show()
+
     def usb_selection(self):
         self.usb_probe()
 
@@ -612,7 +611,7 @@ class MainWindow(QMainWindow):
                         self.Probe = Probe
                         break
                 # print(self.usb_comboBox.currentText())
-                print(Probe,Probe.unique_id)
+                # print(Probe,Probe.unique_id)
                 # print(self.targets_comboBox.currentText())
                 # print(self.frequency[self.speed_comboBox.currentText()])
                 if self.Probe:
@@ -706,8 +705,9 @@ class MainWindow(QMainWindow):
         self.mem_toolButton.setEnabled(True)
 
     def flash_button_click(self):
-        self.flash_button.setEnabled(False)
-        self.programmer.emit(self)
+        if self.file_path != '':
+            self.flash_button.setEnabled(False)
+            self.programmer.emit(self)
 
     def usb_probe(self):
         self.allProbes = ConnectHelper.get_all_connected_probes(False, None, False)
