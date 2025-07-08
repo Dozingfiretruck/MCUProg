@@ -1,8 +1,12 @@
 **English** | [中文](./README_zh.md) 
 
-![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
-
 # MCUProg
+
+![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)[![Latest Release](https://img.shields.io/github/v/release/Dozingfiretruck/MCUProg?label=Release&logo=github)](https://github.com/Dozingfiretruck/nes/releases/latest)![windows](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
+
+github: [MCUProg](https://github.com/Dozingfiretruck/MCUProg) (recommend)
+
+gitee: [MCUProg:](https://gitee.com/Dozingfiretruck/MCUProg) (updates may not be timely due to synchronization issues)
 
 ## Introduction
 
@@ -50,6 +54,14 @@ If the programming fails, please check the following points
 3. Whether the chip supports the selected programming speed
 4. Whether there is an interruption to the download, such as unplugging the USB operation
 5. In other cases, please try to restart the software, if it cannot be solved, please give feedback in time
+
+## Download link
+
+github: https://github.com/Dozingfiretruck/MCUProg/releases
+
+gitee: https://gitee.com/Dozingfiretruck/MCUProg/releases
+
+
 
 ## Software Presentation
 

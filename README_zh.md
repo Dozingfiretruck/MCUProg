@@ -1,8 +1,12 @@
 [**English**](./README.md)  | **中文**
 
-![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
-
 # MCUProg
+
+![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)[![Latest Release](https://img.shields.io/github/v/release/Dozingfiretruck/MCUProg?label=Release&logo=github)](https://github.com/Dozingfiretruck/nes/releases/latest)![windows](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
+
+github: [MCUProg](https://github.com/Dozingfiretruck/MCUProg) (推荐)
+
+gitee: [MCUProg:](https://gitee.com/Dozingfiretruck/MCUProg) (由于同步问题可能导致更新不及时)
 
 ## 介绍
 
@@ -44,6 +48,12 @@ linux下要安装驱动, 驱动在仓库[udev](./udev/)目录下，使用说明�
 3. 芯片是否支持选择的烧录速度
 4. 是否有中断下载比如拔出usb操作
 5. 其他情况请尝试重启软件，如无法解决请及时反馈
+
+## 下载地址
+
+github: https://github.com/Dozingfiretruck/MCUProg/releases
+
+gitee: https://gitee.com/Dozingfiretruck/MCUProg/releases
 
 ## 软件展示
 
