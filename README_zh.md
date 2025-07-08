@@ -12,8 +12,8 @@ MCUProg是一款基于pyocd+PySide6的MUC烧录上位机软件(此软件只是�
 
 ## 软件架构
 
-pyocd: 0.36.0
-PySide6: 6.7.0
+pyocd: 0.37.0
+PySide6: 6.9.1
 
 ## 支持平台
 

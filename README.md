@@ -12,8 +12,8 @@ MCUProg is a MUC programming host computer software based on pyocd+PySide6 (this
 
 ## Software Architecture
 
-pyocd: 0.36.0
-PySide6: 6.7.0
+pyocd: 0.37.0
+PySide6: 6.9.1
 
 ## Support platform 
 
