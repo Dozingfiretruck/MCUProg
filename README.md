@@ -45,6 +45,8 @@ PySide6: 6.9.1
 
 Linux to install the driver,The driver is in the [udev](./udev/) directory of the repository,Instructions for [pyocd Linux driver installation](./udev/README.md)
 
+and need install libusb : `apt install libusb-dev`
+
 ## Precautions
 
 If the programming fails, please check the following points

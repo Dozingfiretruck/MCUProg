@@ -39,6 +39,8 @@ PySide6: 6.9.1
 
 linux下要安装驱动, 驱动在仓库[udev](./udev/)目录下，使用说明参考[pyocd linux驱动安装](./udev/README.md)
 
+并需要安装libusb : `apt install libusb-dev`
+
 ## 注意事项
 
 如烧录失败请检查一下几点
