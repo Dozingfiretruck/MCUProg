@@ -1,8 +1,12 @@
 **English** | [中文](./README_zh.md) 
 
-![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
-
 # MCUProg
+
+![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)[![Latest Release](https://img.shields.io/github/v/release/Dozingfiretruck/MCUProg?label=Release&logo=github)](https://github.com/Dozingfiretruck/nes/releases/latest)![windows](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
+
+github: [MCUProg](https://github.com/Dozingfiretruck/MCUProg) (recommend)
+
+gitee: [MCUProg:](https://gitee.com/Dozingfiretruck/MCUProg) (updates may not be timely due to synchronization issues)
 
 ## Introduction
 
@@ -12,8 +16,8 @@ MCUProg is a MUC programming host computer software based on pyocd+PySide6 (this
 
 ## Software Architecture
 
-pyocd: 0.36.0
-PySide6: 6.7.0
+pyocd: 0.37.0
+PySide6: 6.9.1
 
 ## Support platform 
 
@@ -41,6 +45,8 @@ PySide6: 6.7.0
 
 Linux to install the driver,The driver is in the [udev](./udev/) directory of the repository,Instructions for [pyocd Linux driver installation](./udev/README.md)
 
+and need install libusb : `apt install libusb-dev`
+
 ## Precautions
 
 If the programming fails, please check the following points
@@ -50,6 +56,14 @@ If the programming fails, please check the following points
 3. Whether the chip supports the selected programming speed
 4. Whether there is an interruption to the download, such as unplugging the USB operation
 5. In other cases, please try to restart the software, if it cannot be solved, please give feedback in time
+
+## Download link
+
+github: https://github.com/Dozingfiretruck/MCUProg/releases
+
+gitee: https://gitee.com/Dozingfiretruck/MCUProg/releases
+
+
 
 ## Software Presentation
 
