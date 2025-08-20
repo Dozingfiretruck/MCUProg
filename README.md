@@ -55,3 +55,8 @@ If the programming fails, please check the following points
 
 ![MCUProg](./doc/MCUProg.png)
 
+## Discussion group
+
+​	**Non-technical support, only for the purpose of interest exchange.**
+
+![Communication](./docs/Communication.png)

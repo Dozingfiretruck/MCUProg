@@ -49,3 +49,8 @@ linux下要安装驱动, 驱动在仓库[udev](./udev/)目录下，使用说明�
 
 ![MCUProg](./doc/MCUProg.png)
 
+## 交流群
+
+​	**非技术支持，仅作为兴趣交流**
+
+![Communication](./docs/Communication.png)
