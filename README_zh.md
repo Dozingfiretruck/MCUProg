@@ -2,11 +2,11 @@
 
 # MCUProg
 
-![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)[![Latest Release](https://img.shields.io/github/v/release/Dozingfiretruck/MCUProg?label=Release&logo=github)](https://github.com/Dozingfiretruck/nes/releases/latest)![windows](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
+![github license](https://img.shields.io/github/license/PeakRacing/MCUProg)[![Latest Release](https://img.shields.io/github/v/release/PeakRacing/MCUProg?label=Release&logo=github)](https://github.com/PeakRacing/nes/releases/latest)![windows](https://github.com/PeakRacing/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/PeakRacing/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
 
-github: [MCUProg](https://github.com/Dozingfiretruck/MCUProg) (推荐)
+github: [MCUProg](https://github.com/PeakRacing/MCUProg) (推荐)
 
-gitee: [MCUProg:](https://gitee.com/Dozingfiretruck/MCUProg) (由于同步问题可能导致更新不及时)
+gitee: [MCUProg:](https://gitee.com/PeakRacing/MCUProg) (由于同步问题可能导致更新不及时)
 
 ## 介绍
 
@@ -53,9 +53,9 @@ linux下要安装驱动, 驱动在仓库[udev](./udev/)目录下，使用说明�
 
 ## 下载地址
 
-github: https://github.com/Dozingfiretruck/MCUProg/releases
+github: https://github.com/PeakRacing/MCUProg/releases
 
-gitee: https://gitee.com/Dozingfiretruck/MCUProg/releases
+gitee: https://gitee.com/PeakRacing/MCUProg/releases
 
 ## 软件展示
 

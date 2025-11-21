@@ -2,11 +2,11 @@
 
 # MCUProg
 
-![github license](https://img.shields.io/github/license/Dozingfiretruck/MCUProg)[![Latest Release](https://img.shields.io/github/v/release/Dozingfiretruck/MCUProg?label=Release&logo=github)](https://github.com/Dozingfiretruck/nes/releases/latest)![windows](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/Dozingfiretruck/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
+![github license](https://img.shields.io/github/license/PeakRacing/MCUProg)[![Latest Release](https://img.shields.io/github/v/release/PeakRacing/MCUProg?label=Release&logo=github)](https://github.com/PeakRacing/nes/releases/latest)![windows](https://github.com/PeakRacing/MCUProg/actions/workflows/windows.yml/badge.svg?branch=master)![linux](https://github.com/PeakRacing/MCUProg/actions/workflows/linux.yml/badge.svg?branch=master)
 
-github: [MCUProg](https://github.com/Dozingfiretruck/MCUProg) (recommend)
+github: [MCUProg](https://github.com/PeakRacing/MCUProg) (recommend)
 
-gitee: [MCUProg:](https://gitee.com/Dozingfiretruck/MCUProg) (updates may not be timely due to synchronization issues)
+gitee: [MCUProg:](https://gitee.com/PeakRacing/MCUProg) (updates may not be timely due to synchronization issues)
 
 ## Introduction
 
@@ -59,9 +59,9 @@ If the programming fails, please check the following points
 
 ## Download link
 
-github: https://github.com/Dozingfiretruck/MCUProg/releases
+github: https://github.com/PeakRacing/MCUProg/releases
 
-gitee: https://gitee.com/Dozingfiretruck/MCUProg/releases
+gitee: https://gitee.com/PeakRacing/MCUProg/releases
 
 
 

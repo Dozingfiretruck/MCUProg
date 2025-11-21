@@ -271,10 +271,9 @@ class MainWindow(QMainWindow):
                         <h1>这是一个MCU烧录工具</h1>
                         <p>版本: V{0}<br>
                         作者: {1}<hr>
-                        作者邮箱: dozingfiretruck@qq.com<br>
                         作者仓库:<br>
-                        github: <a href="https://github.com/Dozingfiretruck">https://github.com/Dozingfiretruck</a><br>
-                        gitee: <a href="https://gitee.com/Dozingfiretruck">https://gitee.com/Dozingfiretruck</a><hr>
+                        github: <a href="https://github.com/PeakRacing">https://github.com/PeakRacing</a><br>
+                        gitee: <a href="https://gitee.com/PeakRacing">https://gitee.com/PeakRacing</a><hr>
                         感谢:<br>
                         PySide: V{2}<br>
                         pyocd: V{3}<br>
